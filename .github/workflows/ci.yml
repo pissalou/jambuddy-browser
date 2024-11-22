@@ -33,7 +33,7 @@ jobs:
       - name: Compile and run
         run: |
           emcc -v
-          ./emcc hello.cpp
+          emcc hello.cpp
           ls .
           node a.out.js
 
