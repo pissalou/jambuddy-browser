@@ -48,13 +48,13 @@ jobs:
           host: 'linux'
           target: 'desktop'
           arch: 'linux_gcc_64'
-      - name: Update PATH
-        run: echo ::add-path::$QT_ROOT_DIR/bin
+      - name: List binaries in Qt directory
+        run: find ${{env.QT_ROOT_DIR}}/bin
       - name: Compile and run
         run: |
           emcc -v
           ls $QT_ROOT_DIR/bin
-          qt-cmake .
+          ${{env.QT_ROOT_DIR}}/bin/qt-cmake .
           emcc hello.cpp
           echo "Display current directory..."
           ls .
