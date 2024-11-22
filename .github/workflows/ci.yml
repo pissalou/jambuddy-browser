@@ -42,7 +42,12 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
         with:
-          version: 6.8
+          # Configuring Qt installation according to this awsome website: https://ddalcino.github.io/aqt-list-server/
+          aqtversion: '==3.1.*'
+          version: '6.8.0'
+          host: 'linux'
+          target: 'desktop'
+          arch: 'linux_gcc_64'
       - name: Update PATH
         run: echo ::add-path::$QT_ROOT_DIR/bin
       - name: Compile and run
