@@ -53,7 +53,7 @@ jobs:
       - name: Compile and run
         run: |
           emcc -v
-          qt-cmake .
+          qt-cmake --help
           emcc hello.cpp
           echo "Display current directory..."
           ls .
