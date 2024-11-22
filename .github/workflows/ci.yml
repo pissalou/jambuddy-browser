@@ -35,7 +35,10 @@ jobs:
         run: echo Hello, world!
 
       # Run emscripten      
-      - uses: mymindstorm/setup-emsdk@v14      
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          # Install version compatible with Qt 6.8
+          version: 3.1.56
       - name: Compile and run
         run: |
           emcc -v
