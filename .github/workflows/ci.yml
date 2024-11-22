@@ -39,5 +39,5 @@ jobs:
           echo "Run generated javascript and print to console"
           node a.out.js
           echo "Generate html"
-          emcc hello_world.c -o hello.html
+          emcc hello.cpp -o hello.html
 
