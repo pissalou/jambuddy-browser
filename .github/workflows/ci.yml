@@ -28,7 +28,12 @@ jobs:
       - name: Run a one-line script
         run: echo Hello, world!
 
-      # Verify emscripten      
+      # Run emscripten      
       - uses: mymindstorm/setup-emsdk@v14      
-      - name: Verify
-        run: emcc -v
+      - name: Compile and run
+        run: |
+          emcc -v
+          ./emcc hello.cpp
+          ls .
+          node a.out.js
+
