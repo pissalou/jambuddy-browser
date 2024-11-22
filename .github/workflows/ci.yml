@@ -49,12 +49,11 @@ jobs:
           target: 'desktop'
           arch: 'linux_gcc_64'
       - name: List binaries in Qt directory
-        run: find ${{env.QT_ROOT_DIR}}/bin
+        run: find ${{ env.Qt6_DIR }}/bin
       - name: Compile and run
         run: |
           emcc -v
-          ls $QT_ROOT_DIR/bin
-          ${{env.QT_ROOT_DIR}}/bin/qt-cmake .
+          qt-cmake .
           emcc hello.cpp
           echo "Display current directory..."
           ls .
