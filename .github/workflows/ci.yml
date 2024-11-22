@@ -34,18 +34,20 @@ jobs:
         run: |
           emcc -v
           emcc hello.cpp
-          echo "Display current directory"
+          echo "Display current directory..."
           ls .
-          echo "Run generated javascript and print to console"
+          echo "Run generated javascript and print to console..."
           node a.out.js
-          echo "Generate html"
+          echo "Generate html..."
           emcc hello.cpp -o hello.html
+          echo "Display current directory..."
+          ls .
 
       - name: Upload static files as artifact
         id: deployment
         uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
         with:
-          path: hello.html
+          path: .
 
   # Deployment job
   deploy:
