@@ -47,8 +47,7 @@ jobs:
           version: '6.8.0'
           host: 'linux'
           target: 'desktop'
-          arch: 'linux_gcc_64'
-          modules: 'wasm_32'
+          arch: 'wasm_singlethread'
       - name: List binaries in Qt directory
         run: find ${{ env.Qt6_DIR }}/bin
       - name: Compile and run
