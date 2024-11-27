@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project(hello VERSION 1.0 LANGUAGES CXX)
 
 #[[We replace Core with Quick. This will locate the Qt6Quick module and provide the Qt6::Quick targets we later link against.]]
-find_package(Qt6 6.2 COMPONENTS Quick Gui REQUIRED)
+find_package(Qt6 6.5 COMPONENTS Quick Gui REQUIRED)
 
 #[[We call qt_standard_project_setup, and specify CMAKE_CXX_STANDARD, and CMAKE_CXX_STANDARD_REQUIRED. By passing REQUIRES 6.5
 to qt_standard_project_setup, we opt-in to useful defaults for qt_add_qml_module. It enables all the Qt CMake policies up to version 6.5, in
