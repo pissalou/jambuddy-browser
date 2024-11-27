@@ -54,7 +54,8 @@ jobs:
       - name: Compile and run
         run: |
           # emcc -v
-          qt-cmake -DQT_HOST_PATH=${{ env.QT_ROOT_DIR }}/../gcc_64 -DQt6_DIR=${{ env.QT_ROOT_DIR }}/lib/cmake/Qt6 .
+          qt-cmake -DQT_HOST_PATH=${{ env.QT_ROOT_DIR }}/../gcc_64 .
+          cmake --build .
           # emcc hello.cpp
           # echo "Display current directory..."
           # ls .
