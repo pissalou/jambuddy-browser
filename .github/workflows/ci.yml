@@ -48,10 +48,7 @@ jobs:
           host: 'linux'
           target: 'desktop'
           arch: 'linux_gcc_64'
-          modules: 'wasm_singlethread'
-      - name: Install non-wasm desktop version of Qt 
-        # See https://aqtinstall.readthedocs.io/en/latest/getting_started.html#installing-qt-for-wasm
-        run: aqt install-qt linux desktop 6.8.0 wasm_singlethread --autodesktop
+          modules: 'wasm_32'
       - name: List binaries in Qt directory
         run: find ${{ env.Qt6_DIR }}/bin
       - name: Compile and run
