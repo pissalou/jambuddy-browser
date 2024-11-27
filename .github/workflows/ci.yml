@@ -48,8 +48,8 @@ jobs:
           host: 'linux'
           target: 'desktop'
           arch: 'wasm_singlethread'
-      - name: List binaries in Qt directory
-        run: find ${{ env.Qt6_DIR }}/bin
+      - name: List binaries in Qt directory and make them executable
+        run: find ${{ env.Qt6_DIR }}/bin -exec chmod +x {} \;
       - name: Compile and run
         run: |
           # emcc -v
