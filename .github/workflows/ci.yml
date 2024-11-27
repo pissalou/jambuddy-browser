@@ -42,14 +42,15 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          # Configuring Qt installation according to this awsome website: https://ddalcino.github.io/aqt-list-server/
           aqtversion: '==3.1.*'
           version: '6.5.0'
           host: 'linux'
           target: 'desktop'
           arch: 'wasm_singlethread'
-      - name: List binaries in Qt directory
+      - name: List files in Qt directory
         run: find ${{ env.QT_ROOT_DIR }}
+      - name: Make binaries in Qt directory executables
+        run: find ${{ env.QT_ROOT_DIR }}/bin -print -exec chmod +x {} \;
       - name: Compile and run
         run: |
           # emcc -v
