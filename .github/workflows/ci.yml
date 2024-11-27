@@ -48,12 +48,12 @@ jobs:
           host: 'linux'
           target: 'desktop'
           arch: 'wasm_singlethread'
-      - name: List binaries in Qt directory and make them executable
-        run: find ${{ env.QT_ROOT_DIR }}/bin -exec chmod +x {} \;
+      - name: List binaries in Qt directory
+        run: find ${{ env.QT_ROOT_DIR }}
       - name: Compile and run
         run: |
           # emcc -v
-          qt-cmake -DQT_HOST_PATH=${{ env.QT_ROOT_DIR }}/qt-host -DQt6_DIR=${{ env.QT_ROOT_DIR }} .
+          qt-cmake -DQT_HOST_PATH=${{ env.QT_ROOT_DIR }}/qt-host -DQt6_DIR=${{ env.QT_ROOT_DIR }}/lib/cmake/Qt6 .
           # emcc hello.cpp
           # echo "Display current directory..."
           # ls .
