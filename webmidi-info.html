@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MIDI Access API Test</title>
+    <script type="text/javascript">
+var midiTest = {
+  init: function() {
+    function onMIDISuccess(midiAccess) {
+      console.log(midiAccess);
+      globalThis.__midiAccess = midiAccess;
+      if(midiAccess.inputs.size > 0) {
+        midiAccess.inputs.forEach(function (inp) {
+            console.log("Input device detected: " + inp.name);
+        });
+      }
+      console.log(midiAccess.outputs.get(0));
+      if(midiAccess.outputs.size > 0) {
+        midiAccess.outputs.forEach(function (out) {
+            console.log("Output device detected: " + out.name);
+        });
+        midiAccess.outputs.values().next().value.send([0x90, 60, 0x40]);
+        midiAccess.outputs.values().next().value.send([0x80, 60, 0x40], window.performance.now() + 1000.0);
+        midiAccess.outputs.values().next().value.send([0x90, 64, 0x40]);
+        midiAccess.outputs.values().next().value.send([0x80, 64, 0x40], window.performance.now() + 1000.0);
+        console.log("MIDI Access granted");
+      }
+    }
+    function onMIDIFailure(e) {
+      console.log('No access to MIDI devices' + e);
+    }
+    if(navigator.requestMIDIAccess)
+      navigator.requestMIDIAccess({ sysex: false }).then(onMIDISuccess, onMIDIFailure);
+    else
+      alert("No MIDI support in your browser.");
+  },
+};
+
+midiTest.init();
+    </script>
+</head>
+<body>
+
+</body>
+</html>

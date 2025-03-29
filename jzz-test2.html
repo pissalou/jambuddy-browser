@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TinySynth metronome</title>
+    <script src="https://cdn.jsdelivr.net/npm/jzz"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jzz-synth-tiny"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jzz-input-kbd"></script>
+</head>
+<body>
+    <script>
+        JZZ.synth.Tiny.register('JZZ.synth.Tiny'); // JZZ.synth.Tiny is the default name
+        var midiIn = JZZ().openMidiIn('Oxygen 49').or('Sorry, Oxygen 49 not found');
+        var midiIn2 = JZZ().openMidiIn('Casio USB-MIDI').or('Sorry, Casio USB-MIDI not found');
+        var piano = JZZ.input.Kbd({at:'piano', from:'A0', to:'C8', ww:'36.5'}).and(function() {
+            this.getKeys().setStyle({ borderTopColor: 'crimson', borderWidth: '10px' });
+            //console.log(JSON.stringify(this.getKeys()));
+            this.getWhiteKeys().setStyle({backgroundColor: 'ivory'}, {backgroundColor: 'gray'});
+        });
+        var ascii = JZZ.input.ASCII({Z:'C4', S:'C#4', X:'D4', D:'D#4', C:'E4', V:'F4', G:'F#4', B:'G4', H:'Ab4', N:'A4', J:'Bb4', M:'B4', ',':'C5'});
+        midiIn.connect(ascii);
+        ascii.connect(midiIn);
+        midiIn2.connect(ascii);
+        ascii.connect(piano);
+        JZZ.addMidiIn('JZZ.input.Kbd', piano);
+
+        navigator.requestMIDIAccess = JZZ.requestMIDIAccess;
+        navigator.requestMIDIAccess().then(midiAccess => {
+            globalThis._midiAccess = midiAccess;
+            _currentMidiInput = globalThis._midiAccess.inputs.values().next().value;
+            _currentMidiOutput = globalThis._midiAccess.outputs.values().next().value;
+            console.log(_currentMidiOutput.name + ' loaded!');
+            _currentMidiInput.onmidimessage = (msg) => { _currentMidiOutput.send(Array.from(msg.data)); }
+            console.log(_currentMidiInput.name + ' loaded!');
+        });
+    </script>
+    <footer id="virtualPiano"></footer>
+</body>
+</html>

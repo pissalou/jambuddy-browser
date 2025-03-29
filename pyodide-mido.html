@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+  <head>
+      <title>Pyodide test page</title>
+      <!--script src="https://cdn.jsdelivr.net/pyodide/v0.27.3/full/pyodide.js"></script-->
+      <script src="https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.js"></script>
+  </head>
+  <body>
+    <p>Open your browser console to see Pyodide output</p>
+    <div id="staff"></div>
+    <script type="text/javascript">
+      function drawNote(pitch) {
+          document.getElementById('staff').innerText += pitch
+      }
+
+      async function main() {
+        // bootstrap pyodide
+        let pyodide = await loadPyodide();
+        await pyodide.loadPackage('micropip');
+        const micropip = pyodide.pyimport('micropip');
+        await micropip.install('mido');
+        //await micropip.install(window.location.origin + '/mido_webmidi_backend-0.0.5-py3-none-any.whl');
+        await micropip.install('https://pissalou.github.io/mido_webmidi_backend/mido_webmidi_backend-0.0.1-py3-none-any.whl');
+        // bootstrap end
+        // await micropip.install(window.location.origin + '/pylibremidi-0.0.1-cp312-cp312-emscripten_3_1_58_wasm32.whl');
+        // navigator.requestMIDIAccess().then(midiAccess => {
+            // globalThis.__midiaccess = midiAccess; // Very important! Should be done automatically
+            console.log(pyodide.runPythonAsync(`
+                import sys
+                print(f'Running python {sys.version}')
+                import mido
+                import mido_webmidi_backend
+                mido.set_backend('mido_webmidi_backend')
+                import os
+                os.environ["MIDO_BACKEND"] = "mido_webmidi_backend"
+                await mido_webmidi_backend.init()
+                print(f'Using backend module {mido.backend.module}')
+                devices = mido_webmidi_backend.get_devices()
+                print(f'MIDI Inputs: {mido.get_input_names()}')
+                print(f'MIDI Outputs: {mido.get_output_names()}')
+                def onmidiincallback(mido_msg):
+                  import js
+                  #js.window.document.getElementById('staff').innerText += str(mido_msg.data[1])
+                  js.globalThis.drawNote(mido_msg.data[1])
+                midi_in = mido.open_input('Oxygen 49', callback=onmidiincallback) # TODO better 'CASIO USB-MIDI'
+                print(f'Waiting for a msg on {midi_in}...')
+                # print(midi_in.receive(block=False)) # receive will raise OSError!!!
+                print('Done waiting.')
+                # import pylibremidi as lm
+                # lm.midi1_default_api()
+                # print(f'Available APIs are: {lm.available_apis()}')
+                # callbacks: lm.ObserverConfiguration = lm.ObserverConfiguration()
+                # callbacks.input_added = lambda id: print("MIDI Input connected: " + id.port_name)
+                # callbacks.input_removed = lambda id: print("MIDI Input removed: " + id.port_name)
+                # callbacks.output_added = lambda id: print("MIDI Output connected: " + id.port_name)
+                # callbacks.output_removed = lambda id: print("MIDI Output removed: " + id.port_name)
+                # observer = lm.Observer(callbacks, lm.WEBMIDI)
+                # print(f'Current API is: {observer.get_current_api()}')
+                # print(f'Available inputs are: {[ip.display_name for ip in observer.get_input_ports()]}')
+                # print(f'Available outputs are: {[op.display_name for op in observer.get_output_ports()]}')
+                # midi_out = lm.MidiOut()
+                # err = midi_out.open_port(observer.get_output_ports()[0])
+                # if err:
+                #     print(err)
+                # output = midi_out
+                # output.send_message(0x90, 64, 100)
+                # output.send_message(0x80, 64, 100)
+                # print('Polling...')
+                # observer.poll()
+                mido = mido
+                debug_vars = {glbvar: eval(glbvar) for glbvar in globals() if "__" not in glbvar}
+                print(f'Python script executed successfully. {debug_vars}')
+            `));
+        //});
+      }
+      main();
+    </script>
+  </body>
+</html>

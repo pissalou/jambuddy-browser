@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pyodide MIDI Metronome</title>
+    <script>
+        // TODO: runPython
+        from js import setTimeout
+        from pyodide.ffi import create_once_callable
+        setTimeout(create_once_callable(lambda: js.console.log(1)), 1000)
+        // OR
+        import asyncio
+        await asyncio.sleep(0.01)
+    </script>
+</head>
+<body>
+
+</body>
+</html>

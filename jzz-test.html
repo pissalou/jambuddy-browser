@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TinySynth metronome</title>
+    <script src="https://cdn.jsdelivr.net/npm/jzz"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jzz-synth-tiny"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jzz-input-kbd"></script>
+</head>
+<body>
+    <script>
+        function sleep(s) {
+            return new Promise((resolve) => setTimeout(resolve, s));
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            JZZ.input.Kbd.register('VirtualKbd', {at: 'virtualPiano'});
+            kbdMidiIn = JZZ().openMidiIn('VirtualKbd');
+            JZZ.input.ASCII({
+                Z:'C5', S:'C#5', X:'D5', D:'D#5', C:'E5', V:'F5', G:'F#5', B:'G5', H:'Ab5', N:'A5', J:'Bb5', M:'B5'
+            }).connect(kbdMidiIn);
+
+            console.log('Loading JZZ tiny synth...');
+            JZZ.synth.Tiny.register('TinySynth');
+            var button = document.getElementById('playButton');
+            button.onclick = async () => {
+                globalThis._midiAccess.outputs.values().next().value.send([0x90, 64, 64]);
+                await sleep(500);
+                globalThis._midiAccess.outputs.values().next().value.send([0x90, 67, 64]);
+                await sleep(500);
+                globalThis._midiAccess.outputs.values().next().value.send([0x90, 72, 64]);
+            };
+
+            //JZZ().openMidiOut('TinySynth');
+            navigator.requestMIDIAccess = JZZ.requestMIDIAccess;
+            navigator.requestMIDIAccess().then(midiAccess => {
+                globalThis._midiAccess = midiAccess;
+                _currentMidiInput = globalThis._midiAccess.inputs.values().next().value;
+                _currentMidiOutput = globalThis._midiAccess.outputs.values().next().value;
+                console.log(_currentMidiOutput.name + ' loaded!');
+                _currentMidiInput.onmidimessage = (msg) => { console.log(msg.data); _currentMidiOutput.send([msg.data[0], msg.data[1], msg.data[2]]); }
+                console.log(_currentMidiInput.name + ' loaded!');
+            });
+        });
+    </script>
+    <button id="playButton">Test Midi output</button>
+    <footer id="virtualPiano"></footer>
+</body>
+</html>
