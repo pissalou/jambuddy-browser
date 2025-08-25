@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Worker Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-family: monospace;
+            min-height: 100px;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .success {
+            color: #4ecdc4;
+        }
+        
+        .error {
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Web Worker Demo</h1>
+        
+        <div class="button-group">
+            <button id="sendObject">Send Object</button>
+            <button id="sendBinary">Send Binary Data</button>
+            <button id="sendString">Send String</button>
+            <button id="sendArray">Send Array</button>
+        </div>
+        
+        <div class="status" id="status">
+            Ready to send messages to worker. Click a button above to test!
+        </div>
+    </div>
+
+    <script>        
+        // Create worker from url
+        const worker = new Worker('https://html-preview.github.io/?url=https://raw.githubusercontent.com/pissalou/jambuddy-browser/refs/heads/main/concurrency/worker.js');
+        
+        const statusDiv = document.getElementById('status');
+        const buttons = document.querySelectorAll('button');
+        
+        // Handle messages from worker
+        worker.onmessage = function(event) {
+            const result = event.data;
+            statusDiv.innerHTML = `<span class="success">✅ Worker Response: ${JSON.stringify(result)}</span>`;
+            enableButtons();
+        };
+        
+        // Handle worker errors
+        worker.onerror = function(error) {
+            statusDiv.innerHTML = `<span class="error">❌ Worker Error: ${error.message}</span>`;
+            enableButtons();
+        };
+        
+        function disableButtons() {
+            buttons.forEach(btn => btn.disabled = true);
+        }
+        
+        function enableButtons() {
+            buttons.forEach(btn => btn.disabled = false);
+        }
+        
+        function showLoading(message) {
+            statusDiv.innerHTML = `<span class="loading"></span>${message}`;
+        }
+        
+        // Button event listeners
+        document.getElementById('sendObject').addEventListener('click', () => {
+            disableButtons();
+            showLoading('Sending object to worker...');
+            const data = { 
+                type: 'user', 
+                name: 'John Doe', 
+                age: 30,
+                hobbies: ['reading', 'coding', 'gaming']
+            };
+            worker.postMessage(data);
+        });
+        
+        document.getElementById('sendBinary').addEventListener('click', () => {
+            disableButtons();
+            showLoading('Sending binary data to worker...');
+            // Create some binary data
+            const buffer = new ArrayBuffer(8);
+            const view = new Uint8Array(buffer);
+            view.set([0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x21, 0xFF, 0x00]); // "Hello!" + some bytes
+            worker.postMessage(buffer);
+        });
+        
+        document.getElementById('sendString').addEventListener('click', () => {
+            disableButtons();
+            showLoading('Sending string to worker...');
+            worker.postMessage('Hello from main thread!');
+        });
+        
+        document.getElementById('sendArray').addEventListener('click', () => {
+            disableButtons();
+            showLoading('Sending array to worker...');
+            const data = [1, 2, 3, 'hello', { nested: 'object' }, true];
+            worker.postMessage(data);
+        });
+        
+        // Clean up worker when page unloads
+        window.addEventListener('beforeunload', () => {
+            worker.terminate();
+        });
+    </script>
+</body>
+</html>
