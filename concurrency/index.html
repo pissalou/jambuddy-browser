@@ -102,6 +102,14 @@
     <div class="container">
         <h1>🚀 Web Worker Demo</h1>
         
+        <div class="worker-switch">
+            <label class="switch">
+                <input type="checkbox" id="workerToggle">
+                <span class="slider"></span>
+            </label>
+            <span id="workerLabel">JS Worker/Pyodide Worker</span>
+        </div>
+        
         <div class="button-group">
             <button id="sendObject">Send Object</button>
             <button id="sendBinary">Send Binary Data</button>
@@ -116,8 +124,8 @@
 
     <script>        
         // Create worker from url
-        const worker = new Worker('./worker.js');
-        
+        const workerToggle = document.getElementById('workerToggle');
+        const worker = new Worker(workerToggle.checked ? './worker.py.mjs' : './worker.js');
         const statusDiv = document.getElementById('status');
         const buttons = document.querySelectorAll('button');
         
