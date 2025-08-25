@@ -116,7 +116,7 @@
 
     <script>        
         // Create worker from url
-        const worker = new Worker('https://html-preview.github.io/?url=https://raw.githubusercontent.com/pissalou/jambuddy-browser/refs/heads/main/concurrency/worker.js');
+        const worker = new Worker('./worker.js');
         
         const statusDiv = document.getElementById('status');
         const buttons = document.querySelectorAll('button');

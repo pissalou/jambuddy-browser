@@ -30,41 +30,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Run emscripten      
-      - uses: mymindstorm/setup-emsdk@v14
-        with:
-          # Install version compatible with Qt 6.5
-          version: 3.1.25
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v4
-        with:
-          aqtversion: '==3.1.*'
-          version: '6.5.0'
-          host: 'linux'
-          target: 'desktop'
-          arch: 'wasm_singlethread'
-      - name: List files in Qt directory
-        run: find ${{ env.QT_ROOT_DIR }}
-      - name: Make binaries in Qt directory executables
-        run: find ${{ env.QT_ROOT_DIR }}/bin -print -exec chmod +x {} \;
-      - name: Compile and run
-        run: |
-          # emcc -v
-          qt-cmake -DQT_HOST_PATH=${{ env.QT_ROOT_DIR }}/../gcc_64 .
-          cmake --build .
-          # emcc hello.cpp
-          # echo "Display current directory..."
-          # ls .
-          # echo "Run generated javascript and print to console..."
-          # node a.out.js
-          echo "Generate html..."
-          # emcc hello.cpp -o hello.html
-          # echo "Display current directory..."
-          ls .
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
