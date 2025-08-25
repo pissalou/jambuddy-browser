@@ -6,7 +6,7 @@ const python_script = `
     from js import arrayBuffer
     from pyodide.ffi import JsProxy
     binary_data = arrayBuffer.to_py()
-    print('Python received ' + binary_data.tolist())  # binary_data is a memoryview, binary_data.tobytes()
+    print('Python received ' + ' '.join([hex(num) for num in binary_data.tolist()]))  # binary_data is a memoryview, binary_data.tobytes()
     # If final statement is an expression, its value is returned to JavaScript
     'Python processing completed'
 `;
