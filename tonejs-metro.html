@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tone.js Visual Metronome</title>
+    <script src="https://unpkg.com/tone/build/Tone.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const visualmetro = document.getElementById("visualmetro");
+            const display = document.getElementById("display");
+            const startStopBtn = document.getElementById("startStopBtn");
+
+            const synth = new Tone.Synth({
+              oscillator: {
+                type: 'square'
+              },
+              envelope: {
+                attack: 0.001,
+                decay: 0.05,
+                sustain: 0,
+                release: 0.05
+              }
+            }).toDestination();
+
+            let isPlaying = false;
+
+            const bpm = 120;
+            Tone.Transport.bpm.value = bpm;
+            Tone.Transport.PPQ = 96;
+            Tone.Transport.timeSignature = [4, 4];
+
+            // Update display and play sound on every 16th note
+            Tone.Transport.scheduleRepeat((time) => {
+              const position = Tone.Transport.position.split(':');
+              const measure = parseInt(position[0]);
+              const beat = parseInt(position[1]);
+              const sixteenth = parseInt(position[2]);
+
+              // Update the counter display
+              display.textContent = `${String(measure + 1).padStart(2, '0')}:${beat + 1}:${sixteenth + 1}`;
+
+              // TODO update visual metronome
+              visualmetro.querySelectorAll('circle.active').forEach(element => element.classList.remove('active'));
+              visualmetro.querySelectorAll(`circle:nth-child(${beat + 1})`).forEach(element => element.classList.add('active'));
+
+              // Update the visual
+
+              // Play sound on every beat (i.e., sixteenth === 0)
+              if (sixteenth === 0) {
+                synth.triggerAttackRelease("C8", "8n", time);
+              }
+
+            }, "16n");
+
+            Tone.Transport.scheduleRepeat((time) => {
+              /* TODO: send MIDI beat clock to web worker */
+              /* TODO: send message from MIDI in to web worker */
+              /* TODO: process MIDI messages from web worker */
+            }, "1i"); /* equivalent to 1 PPQ (Pulse Per Quarter)*/
+
+            startStopBtn.addEventListener("click", async () => {
+              if (!isPlaying) {
+                await Tone.start(); // required for audio context
+                Tone.Transport.start();
+                startStopBtn.textContent = "Stop";
+              } else {
+                Tone.Transport.stop();
+                /*Tone.Transport.position = "0:0:0";
+                display.textContent = "01:1:1";*/
+                startStopBtn.textContent = "Start";
+              }
+              isPlaying = !isPlaying;
+            });
+        });
+    </script>
+    <style>
+#visualmetro circle {
+  fill: gray;
+  r: 10;
+}
+
+#visualmetro circle.active {
+  fill: blue;
+}
+    </style>
+</head>
+<body>
+<h1>⏲ ToneJS Visual Metronome</h1>
+<svg id="visualmetro" width="200" height="50" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="25" cy="25" r="10" class="active"/>
+    <circle cx="45" cy="25" r="10"/>
+    <circle cx="65" cy="25" r="10"/>
+    <circle cx="85" cy="25" r="10"/>
+</svg>
+<div id="display">01:1:1</div>
+<button id="startStopBtn">Start</button>
+</body>
+</html>
