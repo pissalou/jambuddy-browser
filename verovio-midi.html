@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width">
-        <title>MIDI playback</title>
+        <title>Verovio w/ MIDI playback</title>
         <!-- A stylesheet for modifying the appearance of the notes being played -->
         <link href="midi.css" rel="stylesheet" type="text/css" />
         <!-- Verovio -->
@@ -85,13 +85,13 @@
                     */
                     MIDIjs.player_callback = midiHightlightingHandler;
 
-                    // This line fetches the MEI file we want to render...
-                    fetch("https://www.verovio.org/examples/downloads/Schubert_Lindenbaum.mei")
-                    // ... then receives the response and "unpacks" the MEI from it
+                    // This line fetches the MEI/MusicXML file we want to render...
+                    fetch("assets/demo.music.xml")
+                    // ... then receives the response and "unpacks" the MEI/MusicXML from it
                     .then((response) => response.text())
-                    .then((meiXML) => {
+                    .then((data) => {
                         // ... then we can load the data into Verovio ...
-                        tk.loadData(meiXML);
+                        tk.loadData(data);
                         // ... and generate the SVG for the first page ...
                         let svg = tk.renderToSVG(1);
                         // ... and finally gets the <div> element with the ID we specified, 
